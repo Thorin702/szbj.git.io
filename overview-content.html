@@ -1,0 +1,249 @@
+<div style="margin-top: 30px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 3px solid #e5e7eb;">
+        <div>
+            <h2 style="margin: 0 0 8px 0; color: #1f2937; font-size: 24px;">🎯 核心业务数据看板</h2>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">点击任意模块查看AI实时分析 · 数据实时更新</p>
+        </div>
+        <button class="btn btn-primary" onclick="location.reload()" style="padding: 10px 25px;">
+            🔄 刷新全部
+        </button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+        <!-- 投前分析模块 -->
+        <div class="content-card" style="cursor: pointer; transition: all 0.3s; border: 2px solid #e5e7eb; position: relative; overflow: hidden;"
+            onmouseover="this.style.borderColor='#0238C1'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'; this.style.transform='translateY(-2px)';"
+            onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.transform='translateY(0)';"
+            onclick="showAIAnalysisModal('preInvestment')">
+
+            <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: #0238C110; border-radius: 50%; pointer-events: none;"></div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: linear-gradient(135deg, #0238C1 0%, #0238C1cc 100%); width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px #0238C140;">
+                        🎯
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #1f2937; font-size: 20px; font-weight: 600;">投前分析</h3>
+                        <p style="margin: 0; color: #6b7280; font-size: 13px;">点击查看AI分析</p>
+                    </div>
+                </div>
+                <div style="background: #0238C115; color: #0238C1; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                    实时数据
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; position: relative; z-index: 1;">
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #0238C1;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">产业链监测</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #0238C1;">6条</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +2</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #FF7A25;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">薄弱环节</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #FF7A25;">7个</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ 待补强</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #43e97b;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">目标企业</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #43e97b;">156家</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +23</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #9F7AEA;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">招商项目</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #9F7AEA;">387亿</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +45亿</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; padding: 12px; background: linear-gradient(90deg, #0238C108 0%, #0238C115 100%); border-radius: 6px; text-align: center; position: relative; z-index: 1;">
+                <span style="color: #0238C1; font-size: 13px; font-weight: 500;">🤖 AI已就绪 · 点击获取深度分析</span>
+            </div>
+        </div>
+
+        <!-- 投中决策模块 -->
+        <div class="content-card" style="cursor: pointer; transition: all 0.3s; border: 2px solid #e5e7eb; position: relative; overflow: hidden;"
+            onmouseover="this.style.borderColor='#FF7A25'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'; this.style.transform='translateY(-2px)';"
+            onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.transform='translateY(0)';"
+            onclick="showAIAnalysisModal('midInvestment')">
+
+            <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: #FF7A2510; border-radius: 50%; pointer-events: none;"></div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: linear-gradient(135deg, #FF7A25 0%, #FF7A25cc 100%); width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px #FF7A2540;">
+                        🔍
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #1f2937; font-size: 20px; font-weight: 600;">投中决策</h3>
+                        <p style="margin: 0; color: #6b7280; font-size: 13px;">点击查看AI分析</p>
+                    </div>
+                </div>
+                <div style="background: #FF7A2515; color: #FF7A25; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                    实时数据
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; position: relative; z-index: 1;">
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #0238C1;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">企业发现</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #0238C1;">2,847家</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +156</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #43e97b;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">智能匹配</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #43e97b;">95.2%</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +3.5%</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #FF7A25;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">产业链监测</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #FF7A25;">实时</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ 7x24h</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #9F7AEA;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">AI周报</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #9F7AEA;">52期</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ 每周更新</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; padding: 12px; background: linear-gradient(90deg, #FF7A2508 0%, #FF7A2515 100%); border-radius: 6px; text-align: center; position: relative; z-index: 1;">
+                <span style="color: #FF7A25; font-size: 13px; font-weight: 500;">🤖 AI已就绪 · 点击获取深度分析</span>
+            </div>
+        </div>
+
+        <!-- 招后服务模块 -->
+        <div class="content-card" style="cursor: pointer; transition: all 0.3s; border: 2px solid #e5e7eb; position: relative; overflow: hidden;"
+            onmouseover="this.style.borderColor='#43e97b'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'; this.style.transform='translateY(-2px)';"
+            onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.transform='translateY(0)';"
+            onclick="showAIAnalysisModal('postInvestment')">
+
+            <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: #43e97b10; border-radius: 50%; pointer-events: none;"></div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: linear-gradient(135deg, #43e97b 0%, #43e97bcc 100%); width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px #43e97b40;">
+                        🤝
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #1f2937; font-size: 20px; font-weight: 600;">招后服务</h3>
+                        <p style="margin: 0; color: #6b7280; font-size: 13px;">点击查看AI分析</p>
+                    </div>
+                </div>
+                <div style="background: #43e97b15; color: #43e97b; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                    实时数据
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; position: relative; z-index: 1;">
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #0238C1;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">金融支持</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #0238C1;">300亿</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ 3大基金</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #FF7A25;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">人才需求</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #FF7A25;">1.8万</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +42%</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #43e97b;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">供需对接</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #43e97b;">856次</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ 匹配度92%</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #9F7AEA;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">服务企业</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #9F7AEA;">1,245家</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +186</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; padding: 12px; background: linear-gradient(90deg, #43e97b08 0%, #43e97b15 100%); border-radius: 6px; text-align: center; position: relative; z-index: 1;">
+                <span style="color: #43e97b; font-size: 13px; font-weight: 500;">🤖 AI已就绪 · 点击获取深度分析</span>
+            </div>
+        </div>
+
+        <!-- 数策通模块 -->
+        <div class="content-card" style="cursor: pointer; transition: all 0.3s; border: 2px solid #e5e7eb; position: relative; overflow: hidden;"
+            onmouseover="this.style.borderColor='#9F7AEA'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.12)'; this.style.transform='translateY(-2px)';"
+            onmouseout="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.transform='translateY(0)';"
+            onclick="showAIAnalysisModal('dataCenter')">
+
+            <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: #9F7AEA10; border-radius: 50%; pointer-events: none;"></div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; position: relative; z-index: 1;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: linear-gradient(135deg, #9F7AEA 0%, #9F7AEAcc 100%); width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 12px #9F7AEA40;">
+                        📊
+                    </div>
+                    <div>
+                        <h3 style="margin: 0 0 5px 0; color: #1f2937; font-size: 20px; font-weight: 600;">数策通</h3>
+                        <p style="margin: 0; color: #6b7280; font-size: 13px;">点击查看AI分析</p>
+                    </div>
+                </div>
+                <div style="background: #9F7AEA15; color: #9F7AEA; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                    实时数据
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; position: relative; z-index: 1;">
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #0238C1;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">政策总数</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #0238C1;">1,531条</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +36</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #FF7A25;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">市级政策</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #FF7A25;">747条</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ 48.8%</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #43e97b;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">AI解读</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #43e97b;">5大类</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ 深度分析</div>
+                </div>
+                <div style="padding: 15px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #9F7AEA;">
+                    <div style="color: #6b7280; font-size: 12px; margin-bottom: 6px;">企业订阅</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: 700; color: #9F7AEA;">3,246家</span>
+                    </div>
+                    <div style="font-size: 11px; color: #10b981; margin-top: 4px; font-weight: 500;">↑ +285</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; padding: 12px; background: linear-gradient(90deg, #9F7AEA08 0%, #9F7AEA15 100%); border-radius: 6px; text-align: center; position: relative; z-index: 1;">
+                <span style="color: #9F7AEA; font-size: 13px; font-weight: 500;">🤖 AI已就绪 · 点击获取深度分析</span>
+            </div>
+        </div>
+    </div>
+</div>

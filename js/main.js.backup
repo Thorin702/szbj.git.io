@@ -1,0 +1,1268 @@
+// 主要交互逻辑
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('北京市数字产业发展支撑平台加载完成');
+
+    // 初始化总览页面的图表
+    initIndustryChart();
+    initGrowthChart();
+    initInnovationChart();
+
+    // 添加数字滚动效果
+    animateNumbers();
+});
+
+// 页面切换
+function showSection(sectionId) {
+    // 隐藏所有页面
+    const sections = document.querySelectorAll('.page-section');
+    sections.forEach(section => {
+        section.style.display = 'none';
+    });
+
+    // 显示目标页面
+    const targetSection = document.getElementById(sectionId);
+    if (targetSection) {
+        targetSection.style.display = 'block';
+    }
+
+    // 更新导航菜单激活状态
+    const navLinks = document.querySelectorAll('.nav-menu a');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+
+    const activeLink = document.querySelector(`.nav-menu a[href="#${sectionId}"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+    }
+
+    // 根据不同页面加载相应内容
+    switch(sectionId) {
+        case 'overview':
+            // 总览页面已经在页面加载时初始化
+            break;
+        case 'pre-investment':
+            loadPreInvestmentPage();
+            break;
+        case 'mid-investment':
+            loadMidInvestmentPage();
+            break;
+        case 'post-investment':
+            loadPostInvestmentPage();
+            break;
+        case 'data-center':
+            loadDataCenterPage();
+            break;
+    }
+}
+
+// Tab切换
+function switchTab(tabId) {
+    // 隐藏所有tab内容
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // 移除所有tab的激活状态
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // 显示目标tab内容
+    const targetTab = document.getElementById(tabId);
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
+
+    // 激活对应的tab按钮
+    event.target.classList.add('active');
+}
+
+// 数字滚动动画
+function animateNumbers() {
+    const statValues = document.querySelectorAll('.stat-value');
+
+    statValues.forEach(element => {
+        const targetValue = element.textContent;
+        const numberMatch = targetValue.match(/[\d,]+/);
+
+        if (numberMatch) {
+            const finalNumber = parseInt(numberMatch[0].replace(/,/g, ''));
+            const suffix = targetValue.replace(numberMatch[0], '');
+            let currentNumber = 0;
+            const increment = finalNumber / 50;
+            const duration = 1000;
+            const stepTime = duration / 50;
+
+            element.textContent = '0' + suffix;
+
+            const timer = setInterval(() => {
+                currentNumber += increment;
+                if (currentNumber >= finalNumber) {
+                    clearInterval(timer);
+                    element.textContent = finalNumber.toLocaleString() + suffix;
+                } else {
+                    element.textContent = Math.floor(currentNumber).toLocaleString() + suffix;
+                }
+            }, stepTime);
+        }
+    });
+}
+
+// 刷新数据
+function refreshData() {
+    const button = event.target;
+    button.innerHTML = '<span class="loading"></span> 刷新中...';
+    button.disabled = true;
+
+    setTimeout(() => {
+        button.innerHTML = '刷新数据';
+        button.disabled = false;
+        showNotification('数据已更新', 'success');
+
+        // 重新初始化图表
+        initIndustryChart();
+        initGrowthChart();
+        initInnovationChart();
+    }, 1500);
+}
+
+// 显示产业详情
+function showIndustryDetail() {
+    showModal('重点产业链详情', `
+        <div class="grid-2">
+            <div class="info-item">
+                <div class="info-label">产业链总数</div>
+                <div class="info-value">28条</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">完整度大于90%</div>
+                <div class="info-value">8条</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">重点培育</div>
+                <div class="info-value">12条</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">新增产业链</div>
+                <div class="info-value">3条</div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 10px;">重点发展方向</h4>
+            <div class="mini-card">
+                <strong>强链工程：</strong>集成电路、人工智能、生物医药等优势产业
+            </div>
+            <div class="mini-card">
+                <strong>补链工程：</strong>新能源汽车关键零部件、高端医疗器械等
+            </div>
+            <div class="mini-card">
+                <strong>延链工程：</strong>工业互联网、智能制造、数字经济等新兴领域
+            </div>
+        </div>
+    `);
+}
+
+// 显示企业详情
+function showEnterpriseDetail() {
+    showModal('规上企业统计', `
+        <div class="grid-3">
+            <div class="info-item">
+                <div class="info-label">规上企业总数</div>
+                <div class="info-value">15,847家</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">上市企业</div>
+                <div class="info-value">423家</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">独角兽企业</div>
+                <div class="info-value">102家</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">高新技术企业</div>
+                <div class="info-value">8,934家</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">专精特新</div>
+                <div class="info-value">1,567家</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">瞪羚企业</div>
+                <div class="info-value">645家</div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 10px;">企业分布热力图</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <span class="badge badge-success">海淀区: 4,567家</span>
+                <span class="badge badge-info">朝阳区: 3,821家</span>
+                <span class="badge badge-warning">大兴区: 1,456家</span>
+                <span class="badge badge-info">昌平区: 1,234家</span>
+                <span class="badge badge-warning">顺义区: 867家</span>
+            </div>
+        </div>
+    `);
+}
+
+// 显示政策详情
+function showPolicyDetail() {
+    showModal('产业政策库', `
+        <div class="grid-2">
+            <div class="info-item">
+                <div class="info-label">政策总数</div>
+                <div class="info-value">1,245条</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">本月新增</div>
+                <div class="info-value">156条</div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 10px;">政策分类统计</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>政策类型</th>
+                        <th>数量</th>
+                        <th>占比</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>财政补贴</td>
+                        <td>356条</td>
+                        <td><span class="badge badge-success">28.6%</span></td>
+                    </tr>
+                    <tr>
+                        <td>税收优惠</td>
+                        <td>289条</td>
+                        <td><span class="badge badge-info">23.2%</span></td>
+                    </tr>
+                    <tr>
+                        <td>人才引进</td>
+                        <td>178条</td>
+                        <td><span class="badge badge-warning">14.3%</span></td>
+                    </tr>
+                    <tr>
+                        <td>融资支持</td>
+                        <td>145条</td>
+                        <td><span class="badge badge-info">11.6%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    `);
+}
+
+// 显示招商详情
+function showInvestmentDetail() {
+    showModal('招商项目统计（本年度）', `
+        <div class="grid-2">
+            <div class="info-item">
+                <div class="info-label">招商项目总数</div>
+                <div class="info-value">368个</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">已落地项目</div>
+                <div class="info-value">57个</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">投资总额</div>
+                <div class="info-value">1,456亿元</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">预期产值</div>
+                <div class="info-value">3,890亿元</div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 10px;">项目进度分布</h4>
+            <div class="mini-card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>谈判中</span>
+                    <span><strong>125个 (34%)</strong></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 34%;"></div>
+                </div>
+            </div>
+            <div class="mini-card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>已签约</span>
+                    <span><strong>186个 (51%)</strong></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 51%;"></div>
+                </div>
+            </div>
+            <div class="mini-card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>已落地</span>
+                    <span><strong>57个 (15%)</strong></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 15%;"></div>
+                </div>
+            </div>
+        </div>
+    `);
+}
+
+// 显示所有产业链
+function showAllChains() {
+    let html = '<div class="card-grid">';
+
+    industryData.chains.forEach(chain => {
+        const badgeClass = chain.completeness >= 85 ? 'badge-success' : 'badge-warning';
+        html += `
+            <div class="mini-card" onclick="showChainDetail('${chain.name}')">
+                <div class="mini-card-title">${chain.icon} ${chain.name}产业链</div>
+                <div class="mini-card-content">
+                    <div style="margin-bottom: 8px;">企业数量: <strong>${chain.companies}家</strong></div>
+                    <div style="margin-bottom: 8px;">产值规模: <strong>${chain.output}亿元</strong></div>
+                    <div style="margin-bottom: 8px;">同比增长: <strong class="trend-up">+${chain.growth}%</strong></div>
+                    <div>完整度: <span class="badge ${badgeClass}">${chain.completeness}%</span></div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+
+    showModal('全部产业链图谱', html);
+}
+
+// 显示产业链详情
+function showChainDetail(chainName) {
+    const chain = industryData.chains.find(c => c.name === chainName);
+    if (!chain) return;
+
+    const badgeClass = chain.completeness >= 85 ? 'badge-success' : 'badge-warning';
+
+    const html = `
+        <div class="grid-2" style="margin-bottom: 20px;">
+            <div class="info-item">
+                <div class="info-label">企业数量</div>
+                <div class="info-value">${chain.companies}家</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">产值规模</div>
+                <div class="info-value">${chain.output}亿元</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">同比增长</div>
+                <div class="info-value" style="color: #48bb78;">+${chain.growth}%</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">产业链完整度</div>
+                <div class="info-value"><span class="badge ${badgeClass}">${chain.completeness}%</span></div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px; color: #2d3748;">主要分布区域</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                ${chain.districts.map(d => `<span class="badge badge-info">${d}</span>`).join('')}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px; color: #2d3748;">重点企业</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                ${chain.keyCompanies.map(c => `<span class="badge badge-success">${c}</span>`).join('')}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px; color: #2d3748;">产业链结构</h4>
+            <div class="mini-card">
+                <div style="font-weight: 600; color: #4facfe; margin-bottom: 8px;">上游环节</div>
+                <div>${chain.upstream.join('、')}</div>
+            </div>
+            <div class="mini-card">
+                <div style="font-weight: 600; color: #667eea; margin-bottom: 8px;">中游环节</div>
+                <div>${chain.midstream.join('、')}</div>
+            </div>
+            <div class="mini-card">
+                <div style="font-weight: 600; color: #f093fb; margin-bottom: 8px;">下游环节</div>
+                <div>${chain.downstream.join('、')}</div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px; color: #2d3748;">薄弱环节（补链机会）</h4>
+            <div class="mini-card" style="border-left-color: #f56565;">
+                ${chain.weakness.map(w => `<span class="badge badge-danger">${w}</span>`).join(' ')}
+            </div>
+        </div>
+
+        <div>
+            <h4 style="margin-bottom: 10px; color: #2d3748;">发展机遇</h4>
+            <div class="mini-card" style="border-left-color: #48bb78;">
+                ${chain.opportunity.map(o => `<span class="badge badge-success">${o}</span>`).join(' ')}
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <div id="chainChart" style="width: 100%; height: 400px;"></div>
+        </div>
+    `;
+
+    showModal(`${chain.icon} ${chain.name}产业链详情`, html);
+
+    // 延迟初始化图表，确保DOM已渲染
+    setTimeout(() => {
+        initChainChart(chainName);
+    }, 100);
+}
+
+// 模态框显示
+function showModal(title, content) {
+    const modal = document.getElementById('detailModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    modalTitle.textContent = title;
+    modalBody.innerHTML = content;
+    modal.classList.add('active');
+}
+
+// 关闭模态框
+function closeModal() {
+    const modal = document.getElementById('detailModal');
+    modal.classList.remove('active');
+}
+
+// 点击模态框外部关闭
+window.onclick = function(event) {
+    const modal = document.getElementById('detailModal');
+    if (event.target === modal) {
+        modal.classList.remove('active');
+    }
+}
+
+// 通知提示
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        padding: 15px 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 3000;
+        animation: slideInRight 0.3s;
+        border-left: 4px solid ${type === 'success' ? '#48bb78' : '#4299e1'};
+    `;
+
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 20px;">${type === 'success' ? '✓' : 'ℹ'}</span>
+            <span style="color: #2d3748;">${message}</span>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 2000);
+}
+
+// 加载招前分析页面
+function loadPreInvestmentPage() {
+    const container = document.getElementById('pre-investment');
+    if (container.children.length > 0) return; // 已加载
+
+    container.innerHTML = `
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">招前智能分析</h2>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="generateAnalysisReport()">生成分析报告</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchPreTab('industry-analysis')">产业图谱</button>
+                <button class="tab" onclick="switchPreTab('enterprise-analysis')">企业分析</button>
+                <button class="tab" onclick="switchPreTab('chain-analysis')">强链补链</button>
+            </div>
+
+            <div id="pre-industry-analysis" class="tab-content active">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索产业..." onkeyup="searchIndustry(this.value)">
+                    <span class="search-icon">🔍</span>
+                </div>
+
+                <div class="card-grid">
+                    ${industryData.chains.map(chain => `
+                        <div class="mini-card" onclick="showChainAnalysis('${chain.name}')">
+                            <div class="mini-card-title">${chain.icon} ${chain.name}</div>
+                            <div class="mini-card-content">
+                                <div style="margin-bottom: 8px;">企业: ${chain.companies}家 | 产值: ${chain.output}亿</div>
+                                <div style="margin-bottom: 8px;">增长: <span class="trend-up">+${chain.growth}%</span></div>
+                                <div>完整度: <span class="badge ${chain.completeness >= 85 ? 'badge-success' : 'badge-warning'}">${chain.completeness}%</span></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div id="pre-enterprise-analysis" class="tab-content">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索企业..." onkeyup="searchEnterprise(this.value)">
+                    <span class="search-icon">🔍</span>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>企业名称</th>
+                                <th>行业</th>
+                                <th>区域</th>
+                                <th>营收（万元）</th>
+                                <th>成长性</th>
+                                <th>创新评分</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${enterpriseData.list.map(ent => `
+                                <tr>
+                                    <td><strong>${ent.name}</strong></td>
+                                    <td>${ent.type}</td>
+                                    <td>${ent.district}</td>
+                                    <td>${ent.revenue.toLocaleString()}</td>
+                                    <td><span class="badge ${ent.growth === 'high' ? 'badge-success' : 'badge-warning'}">${ent.growth === 'high' ? '高' : '中'}</span></td>
+                                    <td>${ent.innovation}/5.0</td>
+                                    <td><button class="btn btn-secondary" onclick="showEnterpriseAnalysis(${ent.id})">详情</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="pre-chain-analysis" class="tab-content">
+                <h3 style="margin-bottom: 20px; color: #2d3748;">强链补链分析</h3>
+
+                <div class="mini-card" style="border-left-color: #48bb78; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">🔗 强链机会（优势产业）</h4>
+                    <div class="card-grid">
+                        <div class="mini-card">
+                            <div class="mini-card-title">人工智能</div>
+                            <div class="mini-card-content">龙头企业集聚，建议引进算力平台和大模型应用企业</div>
+                        </div>
+                        <div class="mini-card">
+                            <div class="mini-card-title">集成电路</div>
+                            <div class="mini-card-content">设计能力突出，建议加强先进制程和封装测试</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mini-card" style="border-left-color: #f56565; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px;">⛓️ 补链机会（薄弱环节）</h4>
+                    <div class="card-grid">
+                        <div class="mini-card" onclick="showSupplementOpportunity('新能源汽车')">
+                            <div class="mini-card-title">新能源汽车 - 动力电池</div>
+                            <div class="mini-card-content">
+                                <div>缺失环节: 正极材料、电解液</div>
+                                <div style="margin-top: 8px;">
+                                    <span class="badge badge-danger">紧急度: 高</span>
+                                    <span class="badge badge-info">目标企业: 15家</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mini-card" onclick="showSupplementOpportunity('生物医药')">
+                            <div class="mini-card-title">生物医药 - 高端器械</div>
+                            <div class="mini-card-content">
+                                <div>缺失环节: 高端影像设备、手术机器人</div>
+                                <div style="margin-top: 8px;">
+                                    <span class="badge badge-warning">紧急度: 中</span>
+                                    <span class="badge badge-info">目标企业: 8家</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mini-card" style="border-left-color: #4facfe;">
+                    <h4 style="margin-bottom: 10px;">🚀 延链机会（新兴方向）</h4>
+                    <div class="card-grid">
+                        <div class="mini-card">
+                            <div class="mini-card-title">元宇宙产业</div>
+                            <div class="mini-card-content">VR/AR硬件、内容制作、虚拟社交平台</div>
+                        </div>
+                        <div class="mini-card">
+                            <div class="mini-card-title">商业航天</div>
+                            <div class="mini-card-content">卫星制造、火箭发射、地面设备</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 加载招中匹配页面
+function loadMidInvestmentPage() {
+    const container = document.getElementById('mid-investment');
+    if (container.children.length > 0) return;
+
+    container.innerHTML = `
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">招中精准匹配</h2>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="showPolicySimulator()">政策模拟器</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchMidTab('policy-match')">政策匹配</button>
+                <button class="tab" onclick="switchMidTab('policy-design')">政策设计</button>
+                <button class="tab" onclick="switchMidTab('investment-projects')">招商项目</button>
+            </div>
+
+            <div id="mid-policy-match" class="tab-content active">
+                <h3 style="margin-bottom: 20px;">智能政策匹配引擎</h3>
+
+                <div class="mini-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-left-color: #667eea;">
+                    <h4>选择企业进行政策匹配</h4>
+                    <select id="enterpriseSelect" onchange="matchPolicies(this.value)" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 6px; margin-top: 10px;">
+                        <option value="">-- 请选择企业 --</option>
+                        ${enterpriseData.list.map(ent => `<option value="${ent.id}">${ent.name} (${ent.type})</option>`).join('')}
+                    </select>
+                </div>
+
+                <div id="policyMatchResult" style="margin-top: 20px;"></div>
+            </div>
+
+            <div id="mid-policy-design" class="tab-content">
+                <h3 style="margin-bottom: 20px;">定制化政策设计</h3>
+
+                <div class="grid-2">
+                    <div class="mini-card">
+                        <h4 style="margin-bottom: 15px;">项目基本信息</h4>
+                        <div class="info-item">
+                            <div class="info-label">项目名称</div>
+                            <input type="text" placeholder="输入项目名称" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">投资规模（万元）</div>
+                            <input type="number" placeholder="输入投资金额" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">行业类型</div>
+                            <select style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                                ${industryData.chains.map(c => `<option>${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mini-card">
+                        <h4 style="margin-bottom: 15px;">预期效益</h4>
+                        <div class="info-item">
+                            <div class="info-label">预期产值（万元/年）</div>
+                            <input type="number" placeholder="预期年产值" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">预期税收（万元/年）</div>
+                            <input type="number" placeholder="预期年税收" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">预期就业（人）</div>
+                            <input type="number" placeholder="预期就业人数" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px;">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="generatePolicyPackage()" style="margin-top: 20px; width: 100%;">生成政策组合方案</button>
+
+                <div id="policyPackageResult" style="margin-top: 20px;"></div>
+            </div>
+
+            <div id="mid-investment-projects" class="tab-content">
+                <h3 style="margin-bottom: 20px;">在谈招商项目</h3>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>项目名称</th>
+                                <th>行业</th>
+                                <th>投资额（万）</th>
+                                <th>进度</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${investmentData.projects.map(proj => `
+                                <tr>
+                                    <td><strong>${proj.name}</strong></td>
+                                    <td>${proj.industry}</td>
+                                    <td>${proj.investAmount.toLocaleString()}</td>
+                                    <td>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: ${proj.progress}%;"></div>
+                                        </div>
+                                        <div style="font-size: 12px; margin-top: 4px;">${proj.progress}%</div>
+                                    </td>
+                                    <td><span class="badge ${proj.stage === '已落地' ? 'badge-success' : proj.stage === '已签约' ? 'badge-info' : 'badge-warning'}">${proj.stage}</span></td>
+                                    <td><button class="btn btn-secondary" onclick="showProjectDetail('${proj.id}')">详情</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 加载招后服务页面
+function loadPostInvestmentPage() {
+    const container = document.getElementById('post-investment');
+    if (container.children.length > 0) return;
+
+    container.innerHTML = `
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">招后全程服务</h2>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="showServiceDashboard()">服务总览</button>
+                </div>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card">
+                    <div class="stat-title">服务企业数</div>
+                    <div class="stat-value">${serviceData.stats.servedCompanies.toLocaleString()}</div>
+                    <div class="stat-trend trend-up">
+                        <span>覆盖率 ${Math.round(serviceData.stats.servedCompanies / serviceData.stats.totalCompanies * 100)}%</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">金融服务</div>
+                    <div class="stat-value">${serviceData.stats.financialServices}</div>
+                    <div class="stat-trend trend-up">
+                        <span>金额 ${serviceData.stats.financialAmount.toLocaleString()}亿</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">人才引进</div>
+                    <div class="stat-value">${serviceData.stats.talentCount}</div>
+                    <div class="stat-trend trend-up">
+                        <span>服务 ${serviceData.stats.talentServices} 次</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">产业对接</div>
+                    <div class="stat-value">${serviceData.stats.industryConnections}</div>
+                    <div class="stat-trend">
+                        <span>本月 +156</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchPostTab('financial')">金融服务</button>
+                <button class="tab" onclick="switchPostTab('talent')">人才服务</button>
+                <button class="tab" onclick="switchPostTab('industry')">产业对接</button>
+                <button class="tab" onclick="switchPostTab('monitoring')">监测预警</button>
+            </div>
+
+            <div id="post-financial" class="tab-content active">
+                <h3 style="margin-bottom: 20px;">金融产品智能匹配</h3>
+
+                <div class="card-grid">
+                    ${serviceData.financialProducts.map(product => `
+                        <div class="mini-card" onclick="showFinancialProduct('${product.id}')">
+                            <div class="mini-card-title">🏦 ${product.name}</div>
+                            <div class="mini-card-content">
+                                <div style="margin-bottom: 8px;"><strong>${product.bank}</strong></div>
+                                <div style="margin-bottom: 8px;">额度: ${product.amount}</div>
+                                <div style="margin-bottom: 8px;">利率: <span style="color: #48bb78; font-weight: 600;">${product.rate}</span></div>
+                                <div>期限: ${product.term}</div>
+                                <div style="margin-top: 10px;">
+                                    ${product.features.map(f => `<span class="badge badge-info">${f}</span>`).join(' ')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <h4 style="margin-top: 30px; margin-bottom: 15px;">近期服务案例</h4>
+                <div class="timeline">
+                    ${serviceData.cases.filter(c => c.serviceType === '金融服务').map(c => `
+                        <div class="timeline-item">
+                            <div class="timeline-date">${c.date}</div>
+                            <div class="timeline-content">
+                                <div style="font-weight: 600; margin-bottom: 5px;">${c.companyName}</div>
+                                <div style="margin-bottom: 5px;">${c.service} - ${c.amount}万元</div>
+                                <div style="color: #48bb78;"><span class="badge ${c.status === '已发放' ? 'badge-success' : 'badge-warning'}">${c.status}</span></div>
+                                <div style="margin-top: 8px; font-size: 13px; color: #718096;">${c.effect}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div id="post-talent" class="tab-content">
+                <h3 style="margin-bottom: 20px;">人才服务</h3>
+
+                <div class="grid-2">
+                    <div class="mini-card">
+                        <h4>👨‍💼 人才招聘服务</h4>
+                        <div style="margin-top: 15px;">
+                            <div class="info-item">
+                                <div class="info-label">本地人才库</div>
+                                <div class="info-value">25,000+ 人</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">外地人才引进</div>
+                                <div class="info-value">本年 890 人</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="showTalentDatabase()" style="width: 100%; margin-top: 10px;">查看人才库</button>
+                        </div>
+                    </div>
+
+                    <div class="mini-card">
+                        <h4>📚 人才培训服务</h4>
+                        <div style="margin-top: 15px;">
+                            <div class="info-item">
+                                <div class="info-label">培训机构</div>
+                                <div class="info-value">156 家</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">培训课程</div>
+                                <div class="info-value">2,340+ 门</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="showTrainingPrograms()" style="width: 100%; margin-top: 10px;">浏览课程</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 30px; margin-bottom: 15px;">人才政策</h4>
+                <div class="card-grid">
+                    ${policyData.list.filter(p => p.type === '人才引进').map(policy => `
+                        <div class="mini-card" onclick="showPolicyDetail2('${policy.id}')">
+                            <div class="mini-card-title">${policy.title}</div>
+                            <div class="mini-card-content">
+                                <div style="margin-bottom: 8px;">补贴额度: <strong>${policy.amount}</strong></div>
+                                <div>${policy.benefits.slice(0, 2).join('、')}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div id="post-industry" class="tab-content">
+                <h3 style="margin-bottom: 20px;">产业资源对接</h3>
+
+                <div class="mini-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);">
+                    <h4>🔍 供需智能匹配</h4>
+                    <p style="margin-top: 10px; color: #4a5568;">输入企业需求，智能推荐上下游合作伙伴</p>
+                    <input type="text" placeholder="输入企业名称或产品关键词" style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 6px; margin-top: 10px;">
+                    <button class="btn btn-primary" onclick="matchSupplyChain()" style="width: 100%; margin-top: 10px;">智能匹配</button>
+                </div>
+
+                <h4 style="margin-top: 30px; margin-bottom: 15px;">对接活动</h4>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>活动名称</th>
+                                <th>时间</th>
+                                <th>地点</th>
+                                <th>参与企业</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>集成电路产业链对接会</td>
+                                <td>2024-07-15</td>
+                                <td>中关村集成电路园</td>
+                                <td>56家</td>
+                                <td><span class="badge badge-info">报名中</span></td>
+                            </tr>
+                            <tr>
+                                <td>AI+制造产业对接会</td>
+                                <td>2024-07-20</td>
+                                <td>北京亦庄</td>
+                                <td>43家</td>
+                                <td><span class="badge badge-warning">筹备中</span></td>
+                            </tr>
+                            <tr>
+                                <td>生物医药投融资对接</td>
+                                <td>2024-06-28</td>
+                                <td>昌平生命科学园</td>
+                                <td>67家</td>
+                                <td><span class="badge badge-success">已完成</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="post-monitoring" class="tab-content">
+                <h3 style="margin-bottom: 20px;">企业监测预警</h3>
+
+                <div class="stats-grid" style="margin-bottom: 20px;">
+                    <div class="stat-card" style="border-left: 4px solid #48bb78;">
+                        <div class="stat-title">健康企业</div>
+                        <div class="stat-value" style="color: #48bb78;">8,456</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #f6ad55;">
+                        <div class="stat-title">预警企业</div>
+                        <div class="stat-value" style="color: #f6ad55;">234</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #f56565;">
+                        <div class="stat-title">风险企业</div>
+                        <div class="stat-value" style="color: #f56565;">45</div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 15px;">近期预警</h4>
+                <div class="card-grid">
+                    <div class="mini-card" style="border-left-color: #f6ad55;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <div class="mini-card-title">⚠️ 某科技公司</div>
+                            <span class="badge badge-warning">中风险</span>
+                        </div>
+                        <div class="mini-card-content">
+                            <div style="margin-bottom: 5px;">预警类型: 现金流紧张</div>
+                            <div style="margin-bottom: 5px;">触发时间: 2024-06-25</div>
+                            <div>处理状态: <span class="badge badge-info">跟进中</span></div>
+                        </div>
+                    </div>
+
+                    <div class="mini-card" style="border-left-color: #f56565;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <div class="mini-card-title">🚨 某制造企业</div>
+                            <span class="badge badge-danger">高风险</span>
+                        </div>
+                        <div class="mini-card-content">
+                            <div style="margin-bottom: 5px;">预警类型: 法律诉讼增多</div>
+                            <div style="margin-bottom: 5px;">触发时间: 2024-06-20</div>
+                            <div>处理状态: <span class="badge badge-warning">已介入</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 加载数据中台页面
+function loadDataCenterPage() {
+    const container = document.getElementById('data-center');
+    if (container.children.length > 0) return;
+
+    container.innerHTML = `
+        <div class="content-card">
+            <div class="card-header">
+                <h2 class="card-title">数据中台</h2>
+            </div>
+
+            <div class="stats-grid" style="margin-bottom: 30px;">
+                <div class="stat-card">
+                    <div class="stat-title">数据源接入</div>
+                    <div class="stat-value">128</div>
+                    <div class="stat-trend trend-up"><span>本月 +12</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">数据总量</div>
+                    <div class="stat-value">58.6TB</div>
+                    <div class="stat-trend trend-up"><span>增长 15.2%</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">数据服务API</div>
+                    <div class="stat-value">456</div>
+                    <div class="stat-trend"><span>调用 2.3M次/日</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">数据质量评分</div>
+                    <div class="stat-value">92.5</div>
+                    <div class="stat-trend trend-up"><span>优秀</span></div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="content-card">
+                    <h3 style="margin-bottom: 20px;">数据资产目录</h3>
+                    <div class="mini-card">
+                        <div class="mini-card-title">📊 企业数据</div>
+                        <div class="mini-card-content">
+                            工商数据、税务数据、社保数据、信用数据等
+                            <div style="margin-top: 10px;">
+                                <span class="badge badge-success">已接入</span>
+                                <span class="badge badge-info">实时更新</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-card-title">🏭 产业数据</div>
+                        <div class="mini-card-content">
+                            产业链数据、市场数据、技术数据、人才数据等
+                            <div style="margin-top: 10px;">
+                                <span class="badge badge-success">已接入</span>
+                                <span class="badge badge-warning">日更新</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-card-title">📋 政策数据</div>
+                        <div class="mini-card-content">
+                            国家政策、地方政策、行业政策等
+                            <div style="margin-top: 10px;">
+                                <span class="badge badge-success">已接入</span>
+                                <span class="badge badge-info">实时更新</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h3 style="margin-bottom: 20px;">数据应用</h3>
+                    <div class="mini-card">
+                        <div class="mini-card-title">🤖 大模型服务</div>
+                        <div class="mini-card-content">
+                            产业分析、智能问答、报告生成、趋势预测
+                        </div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-card-title">🕸️ 知识图谱</div>
+                        <div class="mini-card-content">
+                            产业链图谱、企业关系图谱、政策知识图谱
+                        </div>
+                    </div>
+                    <div class="mini-card">
+                        <div class="mini-card-title">📈 BI分析</div>
+                        <div class="mini-card-content">
+                            可视化大屏、自助分析、智能报表
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Tab切换函数
+function switchPreTab(tabId) {
+    document.querySelectorAll('#pre-investment .tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#pre-investment .tab').forEach(el => el.classList.remove('active'));
+
+    document.getElementById('pre-' + tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+function switchMidTab(tabId) {
+    document.querySelectorAll('#mid-investment .tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#mid-investment .tab').forEach(el => el.classList.remove('active'));
+
+    document.getElementById('mid-' + tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+function switchPostTab(tabId) {
+    document.querySelectorAll('#post-investment .tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#post-investment .tab').forEach(el => el.classList.remove('active'));
+
+    document.getElementById('post-' + tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// 政策匹配功能
+function matchPolicies(enterpriseId) {
+    if (!enterpriseId) return;
+
+    const enterprise = enterpriseData.list.find(e => e.id == enterpriseId);
+    if (!enterprise) return;
+
+    const matchedPolicies = policyData.list.filter(policy => {
+        return policy.industry.includes('全行业') || policy.industry.includes(enterprise.type);
+    });
+
+    let html = `
+        <div class="mini-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);">
+            <h4>企业信息</h4>
+            <div class="grid-2" style="margin-top: 10px;">
+                <div class="info-item">
+                    <div class="info-label">企业名称</div>
+                    <div class="info-value">${enterprise.name}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">行业</div>
+                    <div class="info-value">${enterprise.type}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">发展阶段</div>
+                    <div class="info-value">${enterprise.stage}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">年营收</div>
+                    <div class="info-value">${enterprise.revenue}万元</div>
+                </div>
+            </div>
+        </div>
+
+        <h4 style="margin: 20px 0 15px 0;">匹配政策 (${matchedPolicies.length}条)</h4>
+        <div class="card-grid">
+            ${matchedPolicies.map((policy, index) => `
+                <div class="mini-card" onclick="showPolicyDetail2('${policy.id}')">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <div class="mini-card-title">${policy.title}</div>
+                        <span class="badge badge-success">${95 - index * 5}%</span>
+                    </div>
+                    <div class="mini-card-content">
+                        <div style="margin-bottom: 8px;">类型: ${policy.type}</div>
+                        <div style="margin-bottom: 8px;">额度: <strong>${policy.amount}</strong></div>
+                        <div>${policy.benefits[0]}</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    document.getElementById('policyMatchResult').innerHTML = html;
+    showNotification(`为 ${enterprise.name} 匹配到 ${matchedPolicies.length} 条政策`, 'success');
+}
+
+// 其他辅助函数
+function generateAnalysisReport() {
+    showNotification('正在生成分析报告...', 'info');
+    setTimeout(() => {
+        showNotification('分析报告生成完成', 'success');
+    }, 2000);
+}
+
+function showEnterpriseAnalysis(id) {
+    const enterprise = enterpriseData.list.find(e => e.id === id);
+    if (!enterprise) return;
+
+    const html = `
+        <div class="grid-2">
+            <div class="info-item"><div class="info-label">注册资本</div><div class="info-value">${enterprise.registeredCapital.toLocaleString()}万元</div></div>
+            <div class="info-item"><div class="info-label">年营收</div><div class="info-value">${enterprise.revenue.toLocaleString()}万元</div></div>
+            <div class="info-item"><div class="info-label">纳税额</div><div class="info-value">${enterprise.tax.toLocaleString()}万元</div></div>
+            <div class="info-item"><div class="info-label">员工数</div><div class="info-value">${enterprise.employees}人</div></div>
+            <div class="info-item"><div class="info-label">成立时间</div><div class="info-value">${enterprise.foundedYear}年</div></div>
+            <div class="info-item"><div class="info-label">信用等级</div><div class="info-value"><span class="badge badge-success">${enterprise.credit}</span></div></div>
+            <div class="info-item"><div class="info-label">创新评分</div><div class="info-value">${enterprise.innovation}/5.0</div></div>
+            <div class="info-item"><div class="info-label">专利数量</div><div class="info-value">${enterprise.patents}项</div></div>
+        </div>
+        <h4 style="margin-top: 20px; margin-bottom: 10px;">主要产品</h4>
+        <div>${enterprise.products.map(p => `<span class="badge badge-info">${p}</span>`).join(' ')}</div>
+        <div id="enterpriseRadarChart" style="width: 100%; height: 300px; margin-top: 20px;"></div>
+    `;
+
+    showModal(enterprise.name + ' - 企业画像', html);
+    setTimeout(() => initEnterpriseRadarChart(id), 100);
+}
+
+function showProjectDetail(id) {
+    const project = investmentData.projects.find(p => p.id === id);
+    if (!project) return;
+
+    const html = `
+        <div class="grid-2">
+            <div class="info-item"><div class="info-label">项目名称</div><div class="info-value">${project.name}</div></div>
+            <div class="info-item"><div class="info-label">行业</div><div class="info-value">${project.industry}</div></div>
+            <div class="info-item"><div class="info-label">投资金额</div><div class="info-value">${project.investAmount.toLocaleString()}万元</div></div>
+            <div class="info-item"><div class="info-label">预期产值</div><div class="info-value">${project.expectedOutput.toLocaleString()}万元</div></div>
+            <div class="info-item"><div class="info-label">预期税收</div><div class="info-value">${project.expectedTax.toLocaleString()}万元</div></div>
+            <div class="info-item"><div class="info-label">预期就业</div><div class="info-value">${project.expectedJobs}人</div></div>
+            <div class="info-item"><div class="info-label">项目进度</div><div class="info-value">${project.progress}%</div></div>
+            <div class="info-item"><div class="info-label">项目状态</div><div class="info-value"><span class="badge badge-info">${project.stage}</span></div></div>
+        </div>
+        <h4 style="margin-top: 20px; margin-bottom: 10px;">匹配政策</h4>
+        <div>${project.policyPackage.map(pid => {
+            const p = policyData.list.find(pol => pol.id === pid);
+            return p ? `<span class="badge badge-success">${p.title}</span>` : '';
+        }).join(' ')}</div>
+        <h4 style="margin-top: 20px; margin-bottom: 10px;">项目优势</h4>
+        <div>${project.advantages.map(a => `<div class="mini-card">✓ ${a}</div>`).join('')}</div>
+    `;
+
+    showModal('招商项目详情', html);
+}
+
+function showPolicyDetail2(id) {
+    const policy = policyData.list.find(p => p.id === id);
+    if (!policy) return;
+
+    const html = `
+        <div class="grid-2">
+            <div class="info-item"><div class="info-label">政策级别</div><div class="info-value">${policy.level}</div></div>
+            <div class="info-item"><div class="info-label">政策类型</div><div class="info-value">${policy.type}</div></div>
+            <div class="info-item"><div class="info-label">支持额度</div><div class="info-value">${policy.amount}</div></div>
+            <div class="info-item"><div class="info-label">有效期</div><div class="info-value">${policy.effectiveDate} 至 ${policy.expireDate}</div></div>
+        </div>
+        <h4 style="margin-top: 20px; margin-bottom: 10px;">适用行业</h4>
+        <div>${policy.industry.map(i => `<span class="badge badge-info">${i}</span>`).join(' ')}</div>
+        <h4 style="margin-top: 20px; margin-bottom: 10px;">申报条件</h4>
+        <div>${policy.conditions.map(c => `<div class="mini-card">• ${c}</div>`).join('')}</div>
+        <h4 style="margin-top: 20px; margin-bottom: 10px;">政策优惠</h4>
+        <div>${policy.benefits.map(b => `<div class="mini-card">✓ ${b}</div>`).join('')}</div>
+        <h4 style="margin-top: 20px; margin-bottom: 10px;">申报流程</h4>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            ${policy.applyProcess.map((step, i) => `<span class="badge badge-success">${i + 1}. ${step}</span>`).join('')}
+        </div>
+    `;
+
+    showModal(policy.title, html);
+}
+
+// 搜索功能
+function searchIndustry(keyword) {
+    // 实现搜索逻辑
+    console.log('搜索产业:', keyword);
+}
+
+function searchEnterprise(keyword) {
+    // 实现搜索逻辑
+    console.log('搜索企业:', keyword);
+}
+
+// 添加动画样式
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
